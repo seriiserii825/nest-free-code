@@ -12,7 +12,7 @@ export class AuthController {
   }
 
   @Post('signin')
-  signIn() {
+  async signIn(): Promise<{ message: string }> {
     return this.authService.signIn();
   }
 }
