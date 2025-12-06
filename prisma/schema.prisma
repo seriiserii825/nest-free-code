@@ -5,3 +5,24 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  hash  String
+
+  firstName String?
+  lastName  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Bookmark {
+  id    Int     @id @default(autoincrement())
+  title String?
+  link  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
