@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: "postgres"
+    image: "postgres:16"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "secret_pass"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "nest_free_code"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:

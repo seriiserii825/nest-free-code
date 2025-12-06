@@ -1,5 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { config } from 'dotenv';
+
+// Load .env BEFORE creating the app
+config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
