@@ -6,6 +6,7 @@ import { User } from '@prisma/client';
 import { SignInDto } from './dto/signin.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { IJwtPayload } from './interfaces/IJwtPayload';
 
 @Injectable()
 export class AuthService {
@@ -56,7 +57,7 @@ export class AuthService {
   }
 
   async signToken(user_id: number, email: string): Promise<string> {
-    const payload = {
+    const payload: IJwtPayload = {
       sub: user_id,
       email,
     };
