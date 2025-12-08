@@ -4,10 +4,16 @@ import { SignUpDto } from './dto/signup.dto';
 import * as argon from 'argon2';
 import { User } from '@prisma/client';
 import { SignInDto } from './dto/signin.dto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+    private config: ConfigService,
+  ) {}
   async signUp(
     dto: SignUpDto,
   ): Promise<Pick<User, 'id' | 'email' | 'createdAt'>> {
@@ -32,9 +38,7 @@ export class AuthService {
     return user;
   }
 
-  async signIn(
-    dto: SignInDto,
-  ): Promise<Pick<User, 'id' | 'email' | 'createdAt'>> {
+  async signIn(dto: SignInDto): Promise<{ access_token: string }> {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -46,7 +50,28 @@ export class AuthService {
     if (!password_matches) {
       throw new ForbiddenException('Credentials incorrect');
     }
-    const { hash, ...userWithoutHash } = user;
-    return userWithoutHash;
+    return {
+      access_token: await this.signToken(user.id, user.email),
+    };
+  }
+
+  async signToken(user_id: number, email: string): Promise<string> {
+    const payload = {
+      sub: user_id,
+      email,
+    };
+
+    try {
+      const token = await this.jwt.signAsync(payload, {
+        expiresIn: '15m',
+        secret: this.config.get('JWT_SECRET'),
+      });
+      return token;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new ForbiddenException(`Token signing failed: ${error.message}`);
+      }
+      throw new ForbiddenException('Token signing failed');
+    }
   }
 }
