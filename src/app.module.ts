@@ -16,7 +16,6 @@ import { ConfigModule } from '@nestjs/config';
     AuthModule,
     UserModule,
     BookmarkModule,
-    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
