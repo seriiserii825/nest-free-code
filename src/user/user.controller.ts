@@ -8,6 +8,9 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   getMe(@Req() req: Request) {
-    return 'some string';
+    if (req && 'user' in req) {
+      return req.user;
+    }
+    return null;
   }
 }
